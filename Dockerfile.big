@@ -1,0 +1,26 @@
+# Use official Playwright image
+FROM mcr.microsoft.com/playwright:v1.61.1-noble
+# FROM mcr.microsoft.com/playwright:v1.45.0-jammy
+# FROM docker.io/playwright/chromium:playwright-1.56.1
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files first (better layer caching)
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy rest of the project
+COPY . .
+
+ENV TZ=Europe/Stockholm
+
+# Browsers and OS deps are already included in the base image; just ensure the
+# matching Chromium build for the installed Playwright version is present.
+RUN npx playwright install chromium
+
+# Run tests
+# CMD ["npx", "playwright", "test"]
+CMD ["npm", "run", "play"]

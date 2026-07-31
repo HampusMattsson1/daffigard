@@ -1,0 +1,12 @@
+namespace: rb-icc-lab-tst
+
+resources:
+  - ../../base/daffigard
+
+replicas:
+  - name: daffigard-hampus
+    count: 0
+    # count: 3
+  - name: daffigard-sharif
+    count: 0
+    # count: 3

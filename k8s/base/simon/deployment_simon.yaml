@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daffigard-simon
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: daffigard-simon
+  template:
+    metadata:
+      labels:
+        app: daffigard-simon
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+      - name: daffigard-simon
+        image: ghcr.io/hampus-mattsson_rbl/daffigard:0.1.1
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+        readinessProbe:
+          exec:
+            command:
+            - test
+            - -d
+            - /tmp/user-data-1
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        env:
+          - name: INSTANCE_COUNT
+            value: "2"
+          - name: LOW_RESOURCE
+            value: "false"
+          - name: PROFILE
+            value: "simon"

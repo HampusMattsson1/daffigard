@@ -1,0 +1,76 @@
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+.env
+/user-*
+
+# Browser runtime session files (all are regenerated when browser starts)
+user-*/Default/Cache/
+user-*/Default/Code\ Cache/
+user-*/Default/GPUCache/
+user-*/Default/DawnGraphiteCache/
+user-*/Default/DawnWebGPUCache/
+user-*/Default/DIPS
+user-*/Default/History
+user-*/Default/Preferences
+user-*/Default/Secure\ Preferences
+user-*/Default/Web\ Data
+user-*/Default/Local\ Storage/
+user-*/Default/Session\ Storage/
+user-*/Default/Network/
+user-*/Default/Extension\ State/
+user-*/Default/GCM\ Store/
+user-*/Default/Site\ Characteristics\ Database/
+user-*/Default/Sync\ Data/
+user-*/Default/shared_proto_db/
+user-*/Default/Sessions/
+user-*/GrShaderCache/
+user-*/ShaderCache/
+user-*/GPUPersistentCache/
+user-*/component_crx_cache/
+user-*/extensions_crx_cache/
+user-*/Crashpad/
+user-*/BrowserMetrics/
+user-*/segmentation_platform/
+user-*/Safe\ Browsing/
+user-*/old_GrShaderCache_000/
+user-*/*.db-journal
+user-*/first_party_sets.db
+user-*/Local\ State
+user-data/Default/Cache/
+user-data/Default/Code\ Cache/
+user-data/Default/GPUCache/
+user-data/Default/DawnGraphiteCache/
+user-data/Default/DawnWebGPUCache/
+user-data/Default/DIPS
+user-data/Default/History
+user-data/Default/Preferences
+user-data/Default/Secure\ Preferences
+user-data/Default/Web\ Data
+user-data/Default/Local\ Storage/
+user-data/Default/Session\ Storage/
+user-data/Default/Network/
+user-data/Default/Extension\ State/
+user-data/Default/GCM\ Store/
+user-data/Default/Site\ Characteristics\ Database/
+user-data/Default/Sync\ Data/
+user-data/Default/shared_proto_db/
+user-data/Default/Sessions/
+user-data/GrShaderCache/
+user-data/ShaderCache/
+user-data/GPUPersistentCache/
+user-data/component_crx_cache/
+user-data/extensions_crx_cache/
+user-data/Crashpad/
+user-data/BrowserMetrics/
+user-data/segmentation_platform/
+user-data/Safe\ Browsing/
+user-data/*.db-journal
+user-data/first_party_sets.db
+user-data/Local\ State
