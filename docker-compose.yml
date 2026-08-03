@@ -1,81 +1,20 @@
 version: '3.8'
 
-# Shared configuration across all daffigard services
-x-daffigard-base: &default-base
-  image: ghcr.io/hampusmattsson1/daffigard:0.1.2
-  restart: unless-stopped
-  deploy:
-    resources:
-      limits:
-        cpus: '1.0'
-        memory: 2Gi
-  # Persistent user session storage mounted from host
-  volumes:
-    - ./user_profiles:/app/user_profiles
-
 services:
-  # ---------------------------------------------------------------------------
-  # Dafgård Group
-  # ---------------------------------------------------------------------------
-
-  daffigard-simon:
-    <<: *default-base
-    container_name: daffigard-simon
+  daffigard-robin-billys:
+    image: ghcr.io/hampusmattsson1/daffigard:0.1.2
+    container_name: daffigard-robin-billys
+    shm_size: '2gb' # Critical for Playwright/Chromium in Docker to prevent crashes/timeouts
     environment:
-      - INSTANCE_COUNT=2
+      - INSTANCE_COUNT=1
       - LOW_RESOURCE=false
-      - PROFILE=simon
-    # Readiness probe translated to Docker healthcheck
-    # healthcheck:
-    #   test: ["CMD", "test", "-d", "/tmp/user-data-1"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 3
-    #   start_period: 10s
-
-  daffigard-hampus:
-    <<: *default-base
-    container_name: daffigard-hampus
-    environment:
-      - INSTANCE_COUNT=2
-      - LOW_RESOURCE=false
-      - PROFILE=hampus
-
-  daffigard-sharif:
-    <<: *default-base
-    container_name: daffigard-sharif
-    environment:
-      - INSTANCE_COUNT=2
-      - LOW_RESOURCE=false
-      - PROFILE=sharif
-
-  # ---------------------------------------------------------------------------
-  # Billys Group
-  # ---------------------------------------------------------------------------
-
-  daffigard-hampus-billys:
-    <<: *default-base
-    container_name: daffigard-hampus-billys
-    environment:
-      - INSTANCE_COUNT=2
-      - LOW_RESOURCE=false
-      - PROFILE=hampus-billys
+      - PROFILE=robin-billys
       - VARIANT=billys
-
-  daffigard-sharif-billys:
-    <<: *default-base
-    container_name: daffigard-sharif-billys
-    environment:
-      - INSTANCE_COUNT=2
-      - LOW_RESOURCE=false
-      - PROFILE=sharif-billys
-      - VARIANT=billys
-
-  daffigard-jonas-billys:
-    <<: *default-base
-    container_name: daffigard-jonas-billys
-    environment:
-      - INSTANCE_COUNT=2
-      - LOW_RESOURCE=false
-      - PROFILE=jonas-billys
-      - VARIANT=billys
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2Gi
+    #volumes:
+      # Maps your local persistent profile directory into the container's app path
+      #- ./user-robin-billys:/app/user-robin-billys

@@ -74,3 +74,5 @@ user-data/Safe\ Browsing/
 user-data/*.db-journal
 user-data/first_party_sets.db
 user-data/Local\ State
+
+.DS_Store

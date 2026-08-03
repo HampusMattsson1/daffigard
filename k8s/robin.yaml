@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daffigard-robin-billys
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daffigard-robin-billys
+  template:
+    metadata:
+      labels:
+        app: daffigard-robin-billys
+    spec:
+      # imagePullSecrets:
+      #   - name: ghcr-secret
+      containers:
+      - name: daffigard-robin-billys
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2-robin
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+        env:
+          - name: INSTANCE_COUNT
+            value: "2"
+          - name: LOW_RESOURCE
+            value: "false"
+          - name: PROFILE
+            value: "robin-billys"
+          - name: VARIANT
+            value: "billys"
