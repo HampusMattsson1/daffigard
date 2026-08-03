@@ -15,6 +15,8 @@ PROFILE=user-robin-billys HEADLESS=false npm run billys
 # Podman
 podman build -t ghcr.io/hampusmattsson1/daffigard:0.1.2 .
 
+container run --platform linux/amd64 -e PROFILE=robin-billys -e VARIANT=billys ghcr.io/hampusmattsson1/daffigard:0.1.2-robin
+
 # Copy folder/file from container to host
 podman cp <container_name_or_id>:<path_inside_container> <path_on_host>
 ```

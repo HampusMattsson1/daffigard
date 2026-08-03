@@ -40,10 +40,19 @@ for i in $(seq 1 $COUNT); do
     mkdir -p "$USER_DATA_PATH"
     
     # Copy the selected user-data to the instance directory if it exists
-    if [ -d "/app/$PROFILE_FOLDER" ]; then
-        cp -rp "/app/$PROFILE_FOLDER/." "$USER_DATA_PATH/"
+    PROFILE_SOURCE=""
+    for candidate in "/app/$PROFILE_FOLDER" "/app/$PROFILE_NAME" "./$PROFILE_FOLDER" "./$PROFILE_NAME"; do
+        if [ -d "$candidate" ]; then
+            PROFILE_SOURCE="$candidate"
+            break
+        fi
+    done
+
+    if [ -n "$PROFILE_SOURCE" ]; then
+        echo "Using profile directory '$PROFILE_SOURCE'..."
+        cp -rp "$PROFILE_SOURCE/." "$USER_DATA_PATH/"
     else
-        echo "⚠️ Profile directory '/app/$PROFILE_FOLDER' not found! Starting with a clean session instead."
+        echo "⚠️ Profile directory for '$PROFILE_FOLDER' not found! Starting with a clean session instead."
     fi
     
     # Run the selected variant script with the unique user-data path (browser path already exported globally)
