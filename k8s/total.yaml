@@ -2,48 +2,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: daffigard-simon
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: daffigard-simon
-  template:
-    metadata:
-      labels:
-        app: daffigard-simon
-    spec:
-      imagePullSecrets:
-        - name: ghcr-secret
-      containers:
-      - name: daffigard-simon
-        image: ghcr.io/hampus-mattsson_rbl/daffigard:0.1.2
-        imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            memory: "2Gi"
-            cpu: "1"
-        readinessProbe:
-          exec:
-            command:
-            - test
-            - -d
-            - /tmp/user-data-1
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        env:
-          - name: INSTANCE_COUNT
-            value: "2"
-          - name: LOW_RESOURCE
-            value: "false"
-          - name: PROFILE
-            value: "simon"
-
----
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: daffigard-hampus
 spec:
   replicas: 1
@@ -55,21 +13,17 @@ spec:
       labels:
         app: daffigard-hampus
     spec:
-      imagePullSecrets:
-        - name: ghcr-secret
       containers:
       - name: daffigard-hampus
-        image: ghcr.io/hampus-mattsson_rbl/daffigard:0.1.2
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2
         imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            memory: "2Gi"
-            cpu: "1"
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
         env:
           - name: INSTANCE_COUNT
             value: "2"
-          - name: LOW_RESOURCE
-            value: "false"
           - name: PROFILE
             value: "hampus"
 
@@ -89,21 +43,17 @@ spec:
       labels:
         app: daffigard-sharif
     spec:
-      imagePullSecrets:
-        - name: ghcr-secret
       containers:
       - name: daffigard-sharif
-        image: ghcr.io/hampus-mattsson_rbl/daffigard:0.1.2
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2
         imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            memory: "2Gi"
-            cpu: "1"
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
         env:
           - name: INSTANCE_COUNT
             value: "2"
-          - name: LOW_RESOURCE
-            value: "false"
           - name: PROFILE
             value: "sharif"
 
@@ -125,21 +75,17 @@ spec:
       labels:
         app: daffigard-hampus-billys
     spec:
-      imagePullSecrets:
-        - name: ghcr-secret
       containers:
       - name: daffigard-hampus-billys
-        image: ghcr.io/hampus-mattsson_rbl/daffigard:0.1.2
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2
         imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            memory: "2Gi"
-            cpu: "1"
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
         env:
           - name: INSTANCE_COUNT
             value: "2"
-          - name: LOW_RESOURCE
-            value: "false"
           - name: PROFILE
             value: "hampus-billys"
           - name: VARIANT
@@ -161,21 +107,17 @@ spec:
       labels:
         app: daffigard-sharif-billys
     spec:
-      imagePullSecrets:
-        - name: ghcr-secret
       containers:
       - name: daffigard-sharif-billys
-        image: ghcr.io/hampus-mattsson_rbl/daffigard:0.1.2
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2
         imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            memory: "2Gi"
-            cpu: "1"
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
         env:
           - name: INSTANCE_COUNT
             value: "2"
-          - name: LOW_RESOURCE
-            value: "false"
           - name: PROFILE
             value: "sharif-billys"
           - name: VARIANT
@@ -197,22 +139,210 @@ spec:
       labels:
         app: daffigard-jonas-billys
     spec:
-      imagePullSecrets:
-        - name: ghcr-secret
       containers:
       - name: daffigard-jonas-billys
-        image: ghcr.io/hampus-mattsson_rbl/daffigard:0.1.2
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2
         imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            memory: "2Gi"
-            cpu: "1"
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
         env:
           - name: INSTANCE_COUNT
             value: "2"
-          - name: LOW_RESOURCE
-            value: "false"
           - name: PROFILE
             value: "jonas-billys"
+          - name: VARIANT
+            value: "billys"
+
+---
+
+# Robin
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daffigard-robin-billys
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daffigard-robin-billys
+  template:
+    metadata:
+      labels:
+        app: daffigard-robin-billys
+    spec:
+      containers:
+      - name: daffigard-robin-billys
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2-robin
+        imagePullPolicy: IfNotPresent
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
+        env:
+          - name: INSTANCE_COUNT
+            value: "2"
+          - name: PROFILE
+            value: "robin-billys"
+          - name: VARIANT
+            value: "billys"
+
+---
+
+# Devine
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daffigard-devine-billys
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daffigard-devine-billys
+  template:
+    metadata:
+      labels:
+        app: daffigard-devine-billys
+    spec:
+      containers:
+      - name: daffigard-devine-billys
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2-devine
+        imagePullPolicy: IfNotPresent
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
+        env:
+          - name: INSTANCE_COUNT
+            value: "2"
+          - name: PROFILE
+            value: "devine-billys"
+          - name: VARIANT
+            value: "billys"
+
+---
+
+# Simon Billys & Erik någon
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daffigard-simon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daffigard-simon
+  template:
+    metadata:
+      labels:
+        app: daffigard-simon
+    spec:
+      containers:
+      - name: daffigard-simon
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2
+        imagePullPolicy: IfNotPresent
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
+        env:
+          - name: INSTANCE_COUNT
+            value: "2"
+          - name: PROFILE
+            value: "simon"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daffigard-simon-billys
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daffigard-simon-billys
+  template:
+    metadata:
+      labels:
+        app: daffigard-simon-billys
+    spec:
+      containers:
+      - name: daffigard-simon-billys
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2-simonerik
+        imagePullPolicy: IfNotPresent
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
+        env:
+          - name: INSTANCE_COUNT
+            value: "2"
+          - name: PROFILE
+            value: "simon-billys"
+          - name: VARIANT
+            value: "billys"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daffigard-erik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daffigard-erik
+  template:
+    metadata:
+      labels:
+        app: daffigard-erik
+    spec:
+      containers:
+      - name: daffigard-erik
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2-simonerik
+        imagePullPolicy: IfNotPresent
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
+        env:
+          - name: INSTANCE_COUNT
+            value: "2"
+          - name: PROFILE
+            value: "erik"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daffigard-erik-billys
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daffigard-erik-billys
+  template:
+    metadata:
+      labels:
+        app: daffigard-erik-billys
+    spec:
+      containers:
+      - name: daffigard-erik-billys
+        image: ghcr.io/hampusmattsson1/daffigard:0.1.2-simonerik
+        imagePullPolicy: IfNotPresent
+        # resources:
+        #   limits:
+        #     memory: "2Gi"
+        #     cpu: "1"
+        env:
+          - name: INSTANCE_COUNT
+            value: "2"
+          - name: PROFILE
+            value: "erik-billys"
           - name: VARIANT
             value: "billys"
