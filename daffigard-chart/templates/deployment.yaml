@@ -28,7 +28,7 @@ spec:
             cpu: {{ $.Values.resources.limits.cpu | quote }}
         env:
           - name: INSTANCE_COUNT
-            value: 2
+            value: "2"
           - name: PROFILE
             value: {{ .profile | quote }}
           - name: VARIANT
