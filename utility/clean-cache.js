@@ -23,7 +23,7 @@ const JUNK_PATHS = [
 ];
 
 // Calculate directory size in bytes
-function getDirectorySize(dirPath: string): number {
+function getDirectorySize(dirPath) {
   let totalSize = 0;
   if (!fs.existsSync(dirPath)) return 0;
 
@@ -44,7 +44,7 @@ function getDirectorySize(dirPath: string): number {
   return totalSize;
 }
 
-function cleanProfileDirectory(profileDir: string): number {
+function cleanProfileDirectory(profileDir) {
   const absolutePath = path.resolve(profileDir);
   let freedBytes = 0;
 

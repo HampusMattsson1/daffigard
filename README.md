@@ -44,6 +44,9 @@ $env:PROFILE="user-hampus"; $env:HEADLESS="false"; npm run play
 ``` sh
 # Podman
 podman build -t ghcr.io/hampus-mattsson_rbl/daffigard:0.1.2 .
+
+# userdata cache cleanup
+node utility/clean-cache.js
 ```
 
 v0.2.0 now with less cpu/ram footprint (hopefully)
