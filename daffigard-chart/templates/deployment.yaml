@@ -1,0 +1,45 @@
+{{- range .Values.instances }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daffigard-{{ .name }}
+  labels:
+    app: daffigard-{{ .name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daffigard-{{ .name }}
+  template:
+    metadata:
+      labels:
+        app: daffigard-{{ .name }}
+    spec:
+      containers:
+      - name: daffigard
+        image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+        imagePullPolicy: {{ $.Values.image.pullPolicy }}
+        resources:
+          requests:
+            memory: {{ $.Values.resources.requests.memory | quote }}
+            cpu: {{ $.Values.resources.requests.cpu | default "100m" | quote }}
+          limits:
+            memory: {{ $.Values.resources.limits.memory | quote }}
+            cpu: {{ $.Values.resources.limits.cpu | quote }}
+        env:
+          - name: INSTANCE_COUNT
+            value: 2
+          - name: PROFILE
+            value: {{ .profile | quote }}
+          - name: VARIANT
+            value: {{ .variant | quote }}
+        volumeMounts:
+          - mountPath: /dev/shm
+            name: dshm
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: "256Mi"
+---
+{{- end }}

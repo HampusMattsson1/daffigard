@@ -1,0 +1,10 @@
+services:
+  daffigard-robin-billys:
+    build:
+      context: .
+      target: headed
+    environment:
+      HEADLESS: "false"
+      VNC_ENABLED: "${VNC_ENABLED:-false}"
+    ports:
+      - "127.0.0.1:6080:6080"

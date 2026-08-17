@@ -19,4 +19,14 @@ container run --platform linux/amd64 -e PROFILE=robin-billys -e VARIANT=billys g
 
 # Copy folder/file from container to host
 podman cp <container_name_or_id>:<path_inside_container> <path_on_host>
+
+
+# Profile the container
+podman run --rm -e LOW_RESOURCE=true -e PROFILE=robin-billys -e VARIANT=billys --name daff-test ghcr.io/hampusmattsson1/daffigard:0.1.2-robin
+podman stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}" daff-test
+
+container run --platform linux/amd64 -e PROFILE=hampus-hjm -e INSTANCE_COUNT=2 -e LOW_RESOURCE=true -d --name daff-test ghcr.io/hampusmattsson1/daffigard:0.1.2-op
+container stats --no-stream --format table daff-test
+
+container build -a amd64 -t ghcr.io/hampusmattsson1/daffigard:0.1.2-op .
 ```

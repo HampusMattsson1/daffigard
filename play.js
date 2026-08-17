@@ -9,52 +9,76 @@ const profileName = process.env.PROFILE || 'user-data';
 const profileFolder = profileName.startsWith('user-') ? profileName : `user-${profileName}`;
 const userDataDir = process.env.USER_DATA_DIR || `./${profileFolder}`;
 
-const context = await chromium.launchPersistentContext(userDataDir, {
-  headless: process.env.HEADLESS !== 'false',
-  viewport: process.env.LOW_RESOURCE === 'true' ? { width: 450, height: 800 } : { width: 1280, height: 720 },
-  args: [
-    '--disable-dev-shm-usage',
-    '--no-sandbox',
-  ].concat(process.env.LOW_RESOURCE === 'true' ? [
-    '--disable-gpu',
-    '--js-flags="--max-old-space-size=256"',
-    '--disable-audio-output',
-    '--disable-canvas-aa',
-    '--disable-2d-canvas-clip-aa',
-    '--disable-gl-drawing-for-tests',
-    '--disable-software-rasterizer',
-    '--no-first-run',
-  ] : [])
-});
-const page = context.pages()[0] ?? (await context.newPage());
-
-if (process.env.LOW_RESOURCE === 'true') {
-  // Only block media (videos, audio) and fonts to save memory and CPU
-  // We keep images and stylesheets so the layout/canvas rendering works correctly.
-  await page.route('**/*', (route) => {
-    const resourceType = route.request().resourceType();
-    if (['media', 'font'].includes(resourceType)) {
-      route.abort();
-    } else {
-      route.continue();
-    }
+async function createBrowserContext() {
+  const context = await chromium.launchPersistentContext(userDataDir, {
+    headless: process.env.HEADLESS !== 'false',
+    viewport: process.env.LOW_RESOURCE === 'true' ? { width: 450, height: 800 } : { width: 1280, height: 720 },
+    args: [
+      '--disable-dev-shm-usage',
+      '--no-sandbox',
+      '--disable-background-networking',
+      '--disable-background-timer-throttling',
+      '--disable-component-update',
+      '--disable-default-apps',
+      '--disable-extensions',
+      '--disable-sync',
+      '--disable-translate',
+      '--metrics-recording-only',
+      '--no-first-run',
+      // Audio & GPU / Canvas Memory Optimizations
+      '--mute-audio',
+      '--disable-audio-output',
+      '--disable-audio-support-for-desktop',
+      '--disable-gpu-vsync',
+      '--disable-2d-canvas-clip-aa',
+      '--disable-2d-canvas-image-chromium',
+    ].concat(process.env.LOW_RESOURCE === 'true' ? [
+      '--js-flags=--max-old-space-size=128 --expose-gc',
+      '--disk-cache-size=1',
+      '--media-cache-size=1',
+      '--renderer-process-limit=1',
+    ] : [])
   });
+
+  if (process.env.LOW_RESOURCE === 'true') {
+    // Block media and fonts to save memory and CPU
+    await context.route('**/*', (route) => {
+      const resourceType = route.request().resourceType();
+      if (['media', 'font'].includes(resourceType)) {
+        route.abort();
+      } else {
+        route.continue();
+      }
+    });
+  }
+
+  return context;
 }
 
-await page.goto('https://gamecenter.flarie.com/cff63f8b-5eba-4c79-b604-b17b2c5a1a75');
+async function setupPage(context) {
+  const page = context.pages()[0] ?? (await context.newPage());
 
-console.log('Waiting for game to load...');
+  // Attach Chrome DevTools Protocol session to throttle frame rate / CPU work
+  try {
+    const client = await context.newCDPSession(page);
+    // Emulate CPU throttling (4x slowing down frame loop dramatically reduces RAM/CPU spikes)
+    await client.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+  } catch (cdpErr) {
+    console.warn('Could not attach CDP session for CPU throttling:', cdpErr.message);
+  }
 
-// --- game automation goes here ---
-await page.waitForTimeout(4000);
+  await page.goto('https://gamecenter.flarie.com/cff63f8b-5eba-4c79-b604-b17b2c5a1a75');
+  console.log('Waiting for game to load...');
+  await page.waitForTimeout(4000);
 
-// PLAY
-await page.getByTestId('game-image-background').nth(3).click();
-await page.waitForTimeout(4000);
+  // PLAY
+  await page.getByTestId('game-image-background').nth(3).click();
+  await page.waitForTimeout(4000);
 
-// let playTimeCount = 0; // Unlimited
+  return page;
+}
 
-async function playGame() {
+async function playGame(page) {
     console.log('Starting a new game - ' + new Date().toLocaleString());
     await page.locator('iframe[title="evolve"]').contentFrame().getByTestId('START_BUTTON_CONTAINER').click({ force: true });
     await page.waitForTimeout(3000);
@@ -67,10 +91,8 @@ async function playGame() {
 
         await page.waitForTimeout(waitSeconds);
 
-        // let randomX = Math.floor(Math.random() * (309 - 161 + 1)) + 161; // Random X between 161 and 309
-        // let randomY = Math.floor(Math.random() * (422 - 369 + 1)) + 369; // Random Y between 369 and 422
-        let randomX = 377
-        let randomY = 351
+        let randomX = 377;
+        let randomY = 351;
 
         await page.locator('iframe[title="evolve"]').contentFrame().locator('canvas').click({
         position: {
@@ -79,6 +101,15 @@ async function playGame() {
         },
         force: true
         });
+
+        // Trigger manual V8 Garbage Collection every 20 clicks to purge Canvas buffer leaks
+        if (i % 20 === 0) {
+          try {
+            await page.evaluate(() => { if (window.gc) window.gc(); });
+          } catch (e) {
+            // Ignore if gc is unavailable
+          }
+        }
     }
 
     await page.waitForTimeout(3000);
@@ -93,26 +124,34 @@ async function playGame() {
     });
 }
 
-// Spela igen
-while (true) { // Change this to a higher number for more rounds
+// Spela igen - Recreates context every 5 rounds to prevent WebGL context memory buildup
+let gameCount = 0;
+let currentContext = await createBrowserContext();
+let page = await setupPage(currentContext);
+
+while (true) {
     try {
-        await playGame();
-        console.log('Game finished - ' + new Date().toLocaleString());
+        await playGame(page);
+        gameCount++;
+        console.log(`Game finished (#${gameCount}) - ` + new Date().toLocaleString());
         await page.waitForTimeout(5000);
+
+        // Every 5 games, close the browser context completely to free WebGL texture RAM back to OS
+        if (gameCount % 5 === 0) {
+            console.log('--- Cleaning up browser memory: Relaunching Context ---');
+            await currentContext.close();
+            currentContext = await createBrowserContext();
+            page = await setupPage(currentContext);
+        }
     } catch (err) {
         console.error('⚠️ Error inside game round loop:', err);
-        // Stagger retry to avoid high CPU spiraling
         await page.waitForTimeout(10000);
-        // Reload page to start fresh
         try {
-            await page.reload();
-            await page.waitForTimeout(5000);
-            await page.getByTestId('game-image-background').nth(3).click({ force: true });
-            await page.waitForTimeout(4000);
+            await currentContext.close();
+            currentContext = await createBrowserContext();
+            page = await setupPage(currentContext);
         } catch (reloadErr) {
-            console.error('Failed to reload page after error:', reloadErr);
+            console.error('Failed to restart context after error:', reloadErr);
         }
     }
 }
-
-// await context.close();

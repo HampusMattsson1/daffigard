@@ -45,3 +45,5 @@ $env:PROFILE="user-hampus"; $env:HEADLESS="false"; npm run play
 # Podman
 podman build -t ghcr.io/hampus-mattsson_rbl/daffigard:0.1.2 .
 ```
+
+v0.2.0 now with less cpu/ram footprint (hopefully)

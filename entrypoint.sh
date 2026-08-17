@@ -5,6 +5,19 @@ set -e
 export PLAYWRIGHT_BROWSERS_PATH=/usr/local/playwright-browsers
 export PW_BROWSERS_PATH=/usr/local/playwright-browsers
 
+if [ "${HEADLESS:-true}" = "false" ]; then
+    export DISPLAY=:99
+    Xvfb "$DISPLAY" -screen 0 1280x720x24 -ac +extension GLX +render -noreset &
+    if [ "${VNC_ENABLED:-false}" = "true" ]; then
+        fluxbox &
+        x11vnc -display "$DISPLAY" -forever -shared -nopw -rfbport 5900 &
+        websockify --web /usr/share/novnc 6080 localhost:5900 &
+        echo "Headed browser available at http://localhost:6080/vnc.html"
+    else
+        echo "Headed browser running without VNC; set VNC_ENABLED=true to view it."
+    fi
+fi
+
 # Debug: verify browsers exist in the image
 echo "Checking for Playwright browsers..."
 if [ -d "$PLAYWRIGHT_BROWSERS_PATH" ]; then
@@ -14,7 +27,11 @@ else
     echo "✗ Browser directory NOT found at $PLAYWRIGHT_BROWSERS_PATH"
     # Fallback to installing at runtime
     echo "Installing browsers at runtime..."
-    npx playwright install chromium-headless-shell
+    if [ "${HEADLESS:-true}" = "false" ]; then
+        npx playwright install chromium
+    else
+        npx playwright install chromium-headless-shell
+    fi
 fi
 
 # Number of instances to run, default to 1
