@@ -36,10 +36,19 @@ spec:
         volumeMounts:
           - mountPath: /dev/shm
             name: dshm
+          {{- if $.Values.persistence.enabled }}
+          - mountPath: {{ $.Values.persistence.mountPath | default "/data" }}
+            name: daffigard-storage
+          {{- end }}
       volumes:
         - name: dshm
           emptyDir:
             medium: Memory
             sizeLimit: "256Mi"
+        {{- if $.Values.persistence.enabled }}
+        - name: daffigard-storage
+          persistentVolumeClaim:
+            claimName: {{ $.Values.persistence.claimName | default "daffigard-pvc" }}
+        {{- end }}
 ---
 {{- end }}
