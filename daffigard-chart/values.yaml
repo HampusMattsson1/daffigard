@@ -1,7 +1,7 @@
 # Global default container settings
 image:
   repository: ghcr.io/hampusmattsson1/daffigard
-  tag: 0.2.0-fast
+  tag: 0.2.0-total
   pullPolicy: IfNotPresent
 
 instanceCount: "2"
@@ -35,6 +35,9 @@ instances:
     profile: "sharif-billys"
     variant: "billys"
 
+  - name: jonas
+    profile: "jonas"
+
   - name: jonas-billys
     profile: "jonas-billys"
     variant: "billys"
@@ -42,14 +45,10 @@ instances:
   - name: robin-billys
     profile: "robin-billys"
     variant: "billys"
-    # image:
-      # tag: "0.1.2-robin"
 
   - name: devine-billys
     profile: "devine-billys"
     variant: "billys"
-    # image:
-      # tag: "0.1.2-devine"
 
   - name: simon
     profile: "simon"
@@ -57,16 +56,10 @@ instances:
   - name: simon-billys
     profile: "simon-billys"
     variant: "billys"
-    # image:
-      # tag: "0.1.2-simonerik"
 
   - name: erik
     profile: "erik"
-    # image:
-      # tag: "0.1.2-simonerik"
 
   - name: erik-billys
     profile: "erik-billys"
     variant: "billys"
-    # image:
-      # tag: "0.1.2-simonerik"
