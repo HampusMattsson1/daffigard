@@ -1,7 +1,7 @@
 # Global default container settings
 image:
   repository: ghcr.io/hampusmattsson1/daffigard
-  tag: 0.2.0-total
+  tag: 0.2.0-unlocked
   pullPolicy: IfNotPresent
 
 instanceCount: "2"

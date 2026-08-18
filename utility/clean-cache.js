@@ -22,6 +22,13 @@ const JUNK_PATHS = [
   'Service Worker/ScriptCache',
 ];
 
+// Lock files that prevent Chromium/Chrome from launching
+const LOCK_FILES = [
+  'SingletonLock',
+  'SingletonCookie',
+  'SingletonSocket',
+];
+
 // Calculate directory size in bytes
 function getDirectorySize(dirPath) {
   let totalSize = 0;
@@ -48,6 +55,24 @@ function cleanProfileDirectory(profileDir) {
   const absolutePath = path.resolve(profileDir);
   let freedBytes = 0;
 
+  // -------------------------------------------------------------
+  // 1. Remove Chromium process lock files
+  // -------------------------------------------------------------
+  for (const lockFile of LOCK_FILES) {
+    const lockPath = path.join(absolutePath, lockFile);
+    if (fs.existsSync(lockPath) || fs.lstatSync(lockPath, { throwIfNoEntry: false })) {
+      try {
+        fs.rmSync(lockPath, { force: true });
+        console.log(`  🔓 Removed lock file: ${lockFile}`);
+      } catch (err) {
+        console.warn(`  ⚠️ Could not remove lock file ${lockFile}:`, err);
+      }
+    }
+  }
+
+  // -------------------------------------------------------------
+  // 2. Remove junk / cache directories
+  // -------------------------------------------------------------
   const subTargets = [
     absolutePath,
     path.join(absolutePath, 'Default'),
