@@ -61,12 +61,12 @@ async function setupPage(context) {
   const page = context.pages()[0] ?? (await context.newPage());
 
   // Attach Chrome DevTools Protocol session to throttle CPU & frame rates
-  try {
-    const client = await context.newCDPSession(page);
-    await client.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-  } catch (cdpErr) {
-    console.warn('Could not attach CDP session for CPU throttling:', cdpErr.message);
-  }
+  // try {
+  //   const client = await context.newCDPSession(page);
+  //   await client.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+  // } catch (cdpErr) {
+  //   console.warn('Could not attach CDP session for CPU throttling:', cdpErr.message);
+  // }
 
   await page.goto('https://gamecenter.flarie.com/ceef65b7-325a-4750-9872-af7f6c97ff2a');
   console.log('Waiting for billys to load...');

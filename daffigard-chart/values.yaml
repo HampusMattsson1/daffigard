@@ -1,15 +1,15 @@
 # Global default container settings
 image:
   repository: ghcr.io/hampusmattsson1/daffigard
-  tag: 0.2.0
+  tag: 0.2.0-fast
   pullPolicy: IfNotPresent
 
 instanceCount: "2"
 
 resources:
   requests:
-    memory: "300Mi"
-    cpu: "100m"
+    memory: "500Mi"
+    cpu: "300m"
   limits:
     memory: "1Gi"
     cpu: "750m"
