@@ -1,3 +1,4 @@
+# Global default container settings
 image:
   repository: ghcr.io/hampusmattsson1/daffigard
   tag: 0.2.0-unlocked
@@ -5,25 +6,20 @@ image:
 
 instanceCount: "2"
 
-# Default schedule if not overridden per instance (e.g., every hour)
-defaultSchedule: "0 4 * * *"
-
-# Resource requests and limits
 resources:
   requests:
     memory: "500Mi"
-    cpu: "400m"
+    cpu: "300m"
   limits:
     memory: "1Gi"
-    cpu: "900m"
+    cpu: "750m"
 
-# Storage configuration
 persistence:
-  enabled: false
-  mountPath: "/data"
-  claimName: "daffigard-shared-pvc"
+  enabled: false  # Set to true to enable PVC mount
+  claimName: daffigard-pvc
+  mountPath: /data
 
-# List of instances to deploy as separate CronJobs
+# List of game automation instances
 instances:
   - name: hampus
     profile: "hampus"

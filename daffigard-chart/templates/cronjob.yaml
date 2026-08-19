@@ -1,0 +1,58 @@
+{{- range .Values.instances }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daffigard-{{ .name }}
+  labels:
+    app: daffigard-{{ .name }}
+spec:
+  schedule: {{ .schedule | default $.Values.defaultSchedule | default "0 * * * *" | quote }}
+  concurrencyPolicy: {{ .concurrencyPolicy | default "Forbid" }}
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: {{ .activeDeadlineSeconds | default $.Values.activeDeadlineSeconds | default 9000 }}
+      template:
+        metadata:
+          labels:
+            app: daffigard-{{ .name }}
+        spec:
+          restartPolicy: {{ .restartPolicy | default "OnFailure" }}
+          containers:
+          - name: daffigard
+            image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+            imagePullPolicy: {{ $.Values.image.pullPolicy }}
+            resources:
+              requests:
+                memory: {{ $.Values.resources.requests.memory | quote }}
+                cpu: {{ $.Values.resources.requests.cpu | default "100m" | quote }}
+              limits:
+                memory: {{ $.Values.resources.limits.memory | quote }}
+                cpu: {{ $.Values.resources.limits.cpu | quote }}
+            env:
+              - name: INSTANCE_COUNT
+                value: "2"
+              - name: PROFILE
+                value: {{ .profile | quote }}
+              - name: VARIANT
+                value: {{ .variant | quote }}
+            volumeMounts:
+              - mountPath: /dev/shm
+                name: dshm
+              {{- if $.Values.persistence.enabled }}
+              - mountPath: {{ $.Values.persistence.mountPath | default "/data" }}
+                name: daffigard-storage
+              {{- end }}
+          volumes:
+            - name: dshm
+              emptyDir:
+                medium: Memory
+                sizeLimit: "256Mi"
+            {{- if $.Values.persistence.enabled }}
+            - name: daffigard-storage
+              persistentVolumeClaim:
+                claimName: {{ $.Values.persistence.claimName | default "daffigard-pvc" }}
+            {{- end }}
+---
+{{- end }}
