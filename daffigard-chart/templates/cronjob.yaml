@@ -7,12 +7,13 @@ metadata:
     app: daffigard-{{ .name }}
 spec:
   schedule: {{ .schedule | default $.Values.defaultSchedule | default "0 * * * *" | quote }}
+  timeZone: "Europe/Stockholm"
   concurrencyPolicy: {{ .concurrencyPolicy | default "Forbid" }}
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
-      activeDeadlineSeconds: {{ .activeDeadlineSeconds | default $.Values.activeDeadlineSeconds | default 9000 }}
+      activeDeadlineSeconds: {{ .activeDeadlineSeconds | default $.Values.activeDeadlineSeconds | default 10800 }}
       template:
         metadata:
           labels:

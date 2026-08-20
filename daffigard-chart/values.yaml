@@ -6,7 +6,7 @@ image:
 instanceCount: "2"
 
 # Default schedule if not overridden per instance (e.g., every hour)
-defaultSchedule: "0 4 * * *"
+defaultSchedule: "0 6 * * *"
 
 # Resource requests and limits
 resources:
